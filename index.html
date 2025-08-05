@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2WIN - Cada grado cuenta</title>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(160deg, #0f2e38, #173c48);
+      color: white;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+    .temp {
+      font-size: 120px;
+      font-weight: bold;
+    }
+    .phrase {
+      font-size: 28px;
+      margin-top: 20px;
+      max-width: 80%;
+    }
+    .footer {
+      position: absolute;
+      bottom: 40px;
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+    .qr {
+      position: absolute;
+      bottom: 100px;
+    }
+    img.qr-img {
+      width: 100px;
+      height: 100px;
+    }
+  </style>
+</head>
+<body>
+  <div class="temp" id="temp">--°</div>
+  <div class="phrase" id="phrase">Cargando datos en tiempo real...</div>
+  <div class="qr">
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://www.2win.cl" alt="QR 2win.cl" class="qr-img">
+  </div>
+  <div class="footer">2Win Solution - 10 años ayudando a empresas a ver lo que otros no.</div>
+
+  <script>
+    async function getWeather() {
+      try {
+        const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-33.45&longitude=-70.66&current=temperature_2m');
+        const data = await response.json();
+        const temperature = Math.round(data.current.temperature_2m);
+
+        const frases = {
+  "-5": "Tu empresa está congelada a -5º, ni siquiera el Excel responde",
+  "-4": "A -4º, ya nadie toma decisiones; solo sobreviven",
+  "-3": "Cuando el flujo de caja ya no fluye, se siente a -3º",
+  "-2": "Todo está quieto, lento y mal, como a -2º",
+  "-1": "El problema ya empezó, aunque casi invisible a -1º",
+  "0": "La situación es neutral a 0º, y ese es el problema",
+  "1": "Solo un grado, 1º, separa la estabilidad del colapso",
+  "2": "El margen se enfría a 2º, ¿y tú sigues vendiendo?",
+  "3": "La operación sigue, pero sin rumbo, a 3º",
+  "4": "No estás quebrado, solo dormido a 4º",
+  "5": "Todo parece bien a 5º, hasta que revisas el inventario",
+  "6": "Los errores no duelen todavía a 6º",
+  "7": "La temperatura perfecta para ignorar lo importante es 7º",
+  "8": "Demasiado frío para crecer y demasiado cálido para reaccionar a 8º",
+  "9": "La inercia parece eficiencia a 9º, pero no lo es",
+  "10": "Ni frío ni calor, ni control ni caos, es peligroso a 10º",
+  "11": "El punto exacto donde todo parece bajo control es a 11º",
+  "12": "Tienes 12 sistemas distintos, y ninguno se habla a 12º",
+  "13": "El mismo error se repite 13 veces en silencio a 13º",
+  "14": "Hace 14 días que no ves tu flujo real a 14º",
+  "15": "Tu ERP tiene 15 reportes, pero solo usas 2 a 15º",
+  "16": "Parece eficiencia, pero es falta de información a 16º",
+  "17": "¿En serio tienes 17 procesos para facturar a 17º?",
+  "18": "El Excel 18 es el que todos editan, pero nadie lo sabe a 18º",
+  "19": "Clientes felices, pero rentabilidad cero a 19º",
+  "20": "Las decisiones se sienten tibias y eso cuesta caro a 20º",
+  "21": "Suben las ventas, pero bajan los márgenes a 21º",
+  "22": "Tus datos están en 22 lugares distintos a 22º",
+  "23": "Procesos al rojo y equipos al borde a 23º",
+  "24": "Tienes 24 pendientes y cero prioridades a 24º",
+  "25": "Cuentas por pagar en 25 días, y tú ni sabes a 25º",
+  "26": "Tu equipo arde, pero tú no lo ves a 26º",
+  "27": "El sistema se cae otra vez a 27º",
+  "28": "Así se siente crecer sin control a 28º",
+  "29": "Y ni una alerta a tiempo a 29º",
+  "30": "No estás quemando etapas, estás quemando todo a 30º",
+  "31": "¿A este calor, aún no tienes un ERP a 31º?",
+  "32": "Costos desbordados y clientes impacientes a 32º",
+  "33": "Una empresa a 33º, más calor solo en la quiebra"
+}
+
+        };
+
+        document.getElementById("temp").textContent = `${temperature}°`;
+
+        const frase = frases[temperature] || `${temperature}°: Cada grado cuenta. Y cada clic también.`;
+        document.getElementById("phrase").textContent = frase;
+
+      } catch (error) {
+        document.getElementById("phrase").textContent = "Error al obtener el clima.";
+      }
+    }
+
+    getWeather();
+  </script>
+</body>
+</html>
