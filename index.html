@@ -34,7 +34,7 @@
             background-position: center;
             transition: opacity 1.5s ease-in-out;
             opacity: 0;
-            /* Añadimos un velo oscuro para mejorar la legibilidad del texto */
+            /* Se vuelve a aplicar el velo oscuro para mejorar la legibilidad */
             filter: brightness(0.7);
         }
 
@@ -86,12 +86,12 @@
         }
         
         #tagline {
-            font-size: clamp(1.1rem, 2.2vw, 1.4rem); /* Texto de 10 años más grande */
-            font-weight: 300;
+            font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+            font-weight: 700; 
+            font-style: italic;
             text-shadow: var(--text-shadow);
             max-width: 600px;
             margin-top: 2.5rem;
-            font-style: italic;
             opacity: 0.9;
         }
 
@@ -137,12 +137,13 @@
 
     <main id="main-content">
         <div id="temp">--°</div>
-        <p id="phrase">Cargando...</p>
+        <p id="phrase">Obteniendo ubicación...</p>
         <p id="tagline">En 10 años aprendimos que las empresas cambian grado a grado. Si no lo ves a tiempo, te congelas… o te quemas.</p>
     </main>
 
     <footer>
-     <div id="cta-container">
+        <div id="cta-container">
+      <div id="cta-container">
              <div id="cta-text">DESCUBRE A QUÉ<br>TEMPERATURA<br>ESTÁ TU EMPRESA &gt;</div>
              <img class="qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=https://kulhunter.github.io/QR10year/&qzone=1" alt="Código QR para kulhunter.github.io/QR10year/">
          </div>
@@ -155,53 +156,107 @@
         const imageBgElement = document.getElementById("image-bg");
         const mainContent = document.getElementById("main-content");
 
-        // --- FRASES DE NEGOCIO MEJORADAS ---
+        // --- FRASES DE NEGOCIO CORREGIDAS ---
         const frases = {
             "-5": "A -5°, tus datos están congelados en hojas de cálculo inconexas.",
             "-4": "Con -4° de visibilidad, tomar decisiones es como caminar a ciegas.",
-            "-3": "El flujo de caja se congela. Un ERP te daría el control.",
+            "-3": "A -3°, el flujo de caja se congela. Un ERP te daría el control.",
             "-2": "A -2°, la operación es tan lenta que parece que va en reversa.",
-            "-1": "El problema ya empezó, aunque es casi invisible sin data centralizada.",
-            "0": "Estás en 0. Ni avanzas ni retrocedes. La complacencia es el mayor riesgo.",
+            "-1": "A -1°, el problema ya empezó, aunque es casi invisible sin data centralizada.",
+            "0": "Estás en 0°. Ni avanzas ni retrocedes. La complacencia es el mayor riesgo.",
             "1": "Solo 1 sistema integrado te separa del caos total.",
             "2": "Con 2 planillas de Excel compitiendo, la verdad siempre se pierde.",
             "3": "Tu equipo tiene 3 reuniones para validar un dato que debería ser automático.",
-            "4": "4 horas hombre perdidas al día en tareas manuales. ¿Ya hiciste el cálculo?",
-            "5": "Con 5 sistemas que no se hablan, la ineficiencia se siente.",
-            "6": "6 clics para una tarea simple. Tu sistema actual no está funcionando.",
-            "7": "La suerte no es una estrategia. Necesitas datos, no opiniones.",
+            "4": "Pierdes 4 horas hombre al día en tareas manuales. ¿Ya hiciste el cálculo?",
+            "5": "Con 5 sistemas que no se hablan, la ineficiencia se siente a flor de piel.",
+            "6": "Se necesitan 6 clics para una tarea simple. Tu sistema actual no está funcionando.",
+            "7": "A 7°, la suerte no es una estrategia. Necesitas datos, no opiniones.",
             "8": "8 de cada 10 errores son por data incorrecta. Es hora de un ERP.",
-            "9": "La inercia parece eficiencia, pero solo es falta de información.",
+            "9": "A 9°, la inercia parece eficiencia, pero solo es falta de información.",
             "10": "10 reportes manuales al día. ¿Cuánto tiempo estás perdiendo?",
-            "11": "Todo parece bajo control, hasta que un cliente se queja por un error evitable.",
+            "11": "A 11°, todo parece bajo control, hasta que un cliente se queja por un error evitable.",
             "12": "Tienes 12 procesos distintos para facturar, y ninguno es automático.",
             "13": "Sin un ERP, el mismo error se repite 13 veces en silencio.",
             "14": "Hace 14 días que no ves tu flujo real. Estás operando con data vieja.",
-            "15": "A 15°, la intuición es tu único KPI. Es una apuesta arriesgada.",
-            "16": "Parece eficiencia, pero es falta de un sistema que te alerte a tiempo.",
+            "15": "Con un margen de 15%, la intuición es tu único KPI. Es una apuesta arriesgada.",
+            "16": "A 16°, parece eficiencia, pero es falta de un sistema que te alerte a tiempo.",
             "17": "17 procesos manuales para una venta. ¿En serio crees que eres competitivo?",
             "18": "Tus ventas crecen a 18%, pero tu rentabilidad es un misterio.",
-            "19": "Clientes felices, pero rentabilidad cero. Necesitas visibilidad de costos.",
-            "20": "20% de tu inventario está obsoleto. Tu ERP debería haberte avisado.",
-            "21": "Suben las ventas, pero bajan los márgenes. El calor te impide ver la fuga.",
+            "19": "A 19°, tienes clientes felices, pero rentabilidad cero. Necesitas visibilidad de costos.",
+            "20": "El 20% de tu inventario está obsoleto. Tu ERP debería haberte avisado.",
+            "21": "A 21°, suben las ventas, pero bajan los márgenes. El calor te impide ver la fuga.",
             "22": "Tus datos están en 22 lugares distintos. La torre de Babel de la información.",
-            "23": "Procesos al rojo vivo y equipos al borde del colapso.",
+            "23": "A 23°, tienes procesos al rojo vivo y equipos al borde del colapso.",
             "24": "Tienes 24 pendientes urgentes y cero prioridades claras. Falta un sistema.",
             "25": "A 25°, el calor de la operación te impide ver los problemas de fondo.",
-            "26": "Tu equipo arde por la sobrecarga manual, pero tú no lo ves.",
-            "27": "El sistema se cae otra vez. El costo de no invertir es cada vez más alto.",
-            "28": "Así se siente crecer sin control. Más ventas, más problemas.",
-            "29": "Y ni una alerta a tiempo. Estás reaccionando, no gestionando.",
+            "26": "Tu equipo arde a 26°, consumido por la sobrecarga manual, pero tú no lo ves.",
+            "27": "El sistema se cae otra vez. A 27°, el costo de no invertir es cada vez más alto.",
+            "28": "Así se siente crecer sin control a 28°. Más ventas, más problemas.",
+            "29": "A 29°, y ni una alerta a tiempo. Estás reaccionando, no gestionando.",
             "30": "30 días para cerrar el mes. Con un sistema integrado, serían horas.",
-            "31": "A este calor, ¿aún no tienes un ERP que te dé un respiro?",
-            "32": "Costos desbordados y clientes impacientes. La fórmula del desastre.",
+            "31": "A 31°, ¿aún no tienes un ERP que te dé un respiro?",
+            "32": "A 32°, tienes costos desbordados y clientes impacientes. La fórmula del desastre.",
             "33": "A 33°, tu empresa está quemando recursos, no etapas. Necesitas control."
         };
 
         // --- LÓGICA DEL CLIMA ---
-        async function getWeather() {
-            const lat = -33.45;
-            const lon = -70.66;
+        
+        /**
+         * Función principal que obtiene el clima. Primero intenta obtener la geolocalización
+         * del usuario y, si falla, usa coordenadas de respaldo (Santiago).
+         */
+        function initializeWeather() {
+            if (navigator.geolocation) {
+                const geoOptions = {
+                    enableHighAccuracy: false,
+                    timeout: 10000,
+                    maximumAge: 0,
+                };
+
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        fetchWeather(lat, lon);
+                    },
+                    (error) => {
+                        // --- CORRECCIÓN: Manejo de errores más robusto ---
+                        let userMessage = "Mostrando clima de Santiago.";
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                console.log("Permiso de geolocalización denegado por el usuario.");
+                                userMessage = "Permiso denegado. " + userMessage;
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                console.warn("La información de la ubicación no está disponible.");
+                                userMessage = "Ubicación no disponible. " + userMessage;
+                                break;
+                            case error.TIMEOUT:
+                                console.warn("La solicitud de geolocalización ha caducado.");
+                                userMessage = "Tiempo de espera agotado. " + userMessage;
+                                break;
+                            default:
+                                console.error("Error desconocido al obtener la geolocalización.", error);
+                                userMessage = "Error de ubicación. " + userMessage;
+                        }
+                        phraseElement.textContent = userMessage;
+                        fetchWeather(-33.45, -70.66);
+                    },
+                    geoOptions
+                );
+            } else {
+                console.log("Geolocalización no es soportada por este navegador.");
+                phraseElement.textContent = "Geolocalización no soportada. Mostrando clima de Santiago.";
+                fetchWeather(-33.45, -70.66);
+            }
+        }
+
+        /**
+         * Obtiene los datos del clima de la API y actualiza la interfaz.
+         * @param {number} lat - Latitud
+         * @param {number} lon - Longitud
+         */
+        async function fetchWeather(lat, lon) {
             const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
 
             try {
@@ -215,12 +270,10 @@
                 tempElement.textContent = `${temperature}°`;
                 phraseElement.textContent = frases[temperature] || `Cada grado cuenta. Y cada clic también.`;
                 
-                // CORRECCIÓN: Volvemos a usar picsum.photos que es más estable para este caso de uso.
                 const imageUrl = `https://picsum.photos/seed/${temperature}/1920/1080`;
                 imageBgElement.style.backgroundImage = `url(${imageUrl})`;
                 imageBgElement.style.opacity = 1;
                 
-                // Mostrar contenido con animación
                 mainContent.classList.add('visible');
 
             } catch (error) {
@@ -231,7 +284,7 @@
         }
         
         // --- INICIO ---
-        getWeather();
+        initializeWeather();
 
     </script>
 </body>
