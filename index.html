@@ -1,117 +1,251 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2WIN - Cada grado cuenta</title>
-  <style>
-    body {
-      margin: 0;
-      background: linear-gradient(160deg, #0f2e38, #173c48);
-      color: white;
-      font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      text-align: center;
-    }
-    .temp {
-      font-size: 120px;
-      font-weight: bold;
-    }
-    .phrase {
-      font-size: 28px;
-      margin-top: 20px;
-      max-width: 80%;
-    }
-    .footer {
-      position: absolute;
-      bottom: 40px;
-      font-size: 18px;
-      color: rgba(255, 255, 255, 0.8);
-    }
-    .qr {
-      position: absolute;
-      bottom: 100px;
-    }
-    img.qr-img {
-      width: 100px;
-      height: 100px;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2WIN - Cada grado cuenta</title>
+    
+    <!-- Importamos la fuente de Google para mejorar la tipografía -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            background-color: #1a202c;
+            color: white;
+        }
+
+        #video-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -1;
+            transform: translateX(-50%) translateY(-50%);
+            background-size: cover;
+            transition: opacity 1s ease-in-out;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 1rem;
+        }
+
+        #weather-container {
+            background: rgba(20, 20, 20, 0.25);
+            backdrop-filter: blur(15px) saturate(150%);
+            -webkit-backdrop-filter: blur(15px) saturate(150%);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem clamp(1.5rem, 5vw, 3rem);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1.5s ease-out, transform 1.5s ease-out;
+            max-width: 90vw;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        #weather-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #city {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 700;
+            text-shadow: var(--text-shadow);
+        }
+
+        .temp-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin: 0.5rem 0;
+        }
+
+        #weather-icon {
+            width: clamp(60px, 15vw, 100px);
+            height: clamp(60px, 15vw, 100px);
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+        }
+
+        #temp {
+            font-size: clamp(4.5rem, 18vw, 9rem);
+            font-weight: 900;
+            text-shadow: var(--text-shadow);
+            line-height: 1;
+        }
+
+        #condition {
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            font-weight: 700;
+            text-transform: capitalize;
+            text-shadow: var(--text-shadow);
+        }
+        
+        #high-low {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            font-weight: 300;
+            text-shadow: var(--text-shadow);
+            opacity: 0.9;
+        }
+
+        #phrase {
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            font-weight: 400;
+            text-shadow: var(--text-shadow);
+            margin-top: 1.5rem;
+            max-width: 600px;
+            font-style: italic;
+            opacity: 0.95;
+        }
+        
+        footer {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 1.5rem;
+            right: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-text {
+            font-size: clamp(0.75rem, 2vw, 1rem);
+            font-weight: 700;
+            text-shadow: var(--text-shadow);
+        }
+        
+        .qr-img {
+            width: clamp(60px, 10vw, 80px);
+            height: clamp(60px, 10vw, 80px);
+            border-radius: 0.5rem;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+    </style>
 </head>
 <body>
-  <div class="temp" id="temp">--°</div>
-  <div class="phrase" id="phrase">Cargando datos en tiempo real...</div>
-  <div class="qr">
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://www.2win.cl" alt="QR 2win.cl" class="qr-img">
-  </div>
-  <div class="footer">2Win Solution - 10 años ayudando a empresas a ver lo que otros no.</div>
+    <video autoplay muted loop id="video-bg">
+        <!-- El video se cargará aquí con JavaScript -->
+    </video>
 
-  <script>
-    async function getWeather() {
-      try {
-        const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-33.45&longitude=-70.66&current=temperature_2m');
-        const data = await response.json();
-        const temperature = Math.round(data.current.temperature_2m);
+    <main>
+        <div id="weather-container">
+            <div id="city">Santiago</div>
+            <div class="temp-container">
+                <img id="weather-icon" src="" alt="Icono del Clima">
+                <div id="temp">--°</div>
+            </div>
+            <div id="condition">--</div>
+            <div id="high-low">Max: --° / Min: --°</div>
+            <div id="phrase">Cargando...</div>
+        </div>
+    </main>
 
-        const frases = {
-  "-5": "Tu empresa está congelada a -5º, ni siquiera el Excel responde",
-  "-4": "A -4º, ya nadie toma decisiones; solo sobreviven",
-  "-3": "Cuando el flujo de caja ya no fluye, se siente a -3º",
-  "-2": "Todo está quieto, lento y mal, como a -2º",
-  "-1": "El problema ya empezó, aunque casi invisible a -1º",
-  "0": "La situación es neutral a 0º, y ese es el problema",
-  "1": "Solo un grado, 1º, separa la estabilidad del colapso",
-  "2": "El margen se enfría a 2º, ¿y tú sigues vendiendo?",
-  "3": "La operación sigue, pero sin rumbo, a 3º",
-  "4": "No estás quebrado, solo dormido a 4º",
-  "5": "Todo parece bien a 5º, hasta que revisas el inventario",
-  "6": "Los errores no duelen todavía a 6º",
-  "7": "La temperatura perfecta para ignorar lo importante es 7º",
-  "8": "Demasiado frío para crecer y demasiado cálido para reaccionar a 8º",
-  "9": "La inercia parece eficiencia a 9º, pero no lo es",
-  "10": "Ni frío ni calor, ni control ni caos, es peligroso a 10º",
-  "11": "El punto exacto donde todo parece bajo control es a 11º",
-  "12": "Tienes 12 sistemas distintos, y ninguno se habla a 12º",
-  "13": "El mismo error se repite 13 veces en silencio a 13º",
-  "14": "Hace 14 días que no ves tu flujo real a 14º",
-  "15": "Tu ERP tiene 15 reportes, pero solo usas 2 a 15º",
-  "16": "Parece eficiencia, pero es falta de información a 16º",
-  "17": "¿En serio tienes 17 procesos para facturar a 17º?",
-  "18": "El Excel 18 es el que todos editan, pero nadie lo sabe a 18º",
-  "19": "Clientes felices, pero rentabilidad cero a 19º",
-  "20": "Las decisiones se sienten tibias y eso cuesta caro a 20º",
-  "21": "Suben las ventas, pero bajan los márgenes a 21º",
-  "22": "Tus datos están en 22 lugares distintos a 22º",
-  "23": "Procesos al rojo y equipos al borde a 23º",
-  "24": "Tienes 24 pendientes y cero prioridades a 24º",
-  "25": "Cuentas por pagar en 25 días, y tú ni sabes a 25º",
-  "26": "Tu equipo arde, pero tú no lo ves a 26º",
-  "27": "El sistema se cae otra vez a 27º",
-  "28": "Así se siente crecer sin control a 28º",
-  "29": "Y ni una alerta a tiempo a 29º",
-  "30": "No estás quemando etapas, estás quemando todo a 30º",
-  "31": "¿A este calor, aún no tienes un ERP a 31º?",
-  "32": "Costos desbordados y clientes impacientes a 32º",
-  "33": "Una empresa a 33º, más calor solo en la quiebra"
-}
+    <footer>
+        <div class="footer-text">2Win Solution - 10 años ayudando a empresas a ver lo que otros no.</div>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://www.2win.cl&bgcolor=ffffff&color=000000&qzone=1" alt="QR 2win.cl" class="qr-img">
+    </footer>
+    
+    <script>
+        // --- ELEMENTOS DEL DOM ---
+        const tempElement = document.getElementById("temp");
+        const phraseElement = document.getElementById("phrase");
+        const weatherContainer = document.getElementById("weather-container");
+        const conditionElement = document.getElementById("condition");
+        const highLowElement = document.getElementById("high-low");
+        const weatherIconElement = document.getElementById("weather-icon");
+        const videoBgElement = document.getElementById("video-bg");
 
+        // --- DICCIONARIOS Y FRASES ---
+        const frases = { "-5":"Tu empresa est\u00e1 congelada a -5\u00ba, ni siquiera el Excel responde.","-4":"A -4\u00ba, ya nadie toma decisiones; solo sobreviven.","-3":"Cuando el flujo de caja ya no fluye, se siente a -3\u00ba.","-2":"Todo est\u00e1 quieto, lento y mal, como a -2\u00ba.","-1":"El problema ya empez\u00f3, aunque casi invisible a -1\u00ba.","0":"La situaci\u00f3n es neutral a 0\u00ba, y ese es el problema.","1":"Solo un grado, 1\u00ba, separa la estabilidad del colapso.","2":"El margen se enfr\u00eda a 2\u00ba, \u00bfy t\u00fa sigues vendiendo?","3":"La operaci\u00f3n sigue, pero sin rumbo, a 3\u00ba.","4":"No est\u00e1s quebrado, solo dormido a 4\u00ba.","5":"Todo parece bien a 5\u00ba, hasta que revisas el inventario.","6":"Los errores no duelen todav\u00eda a 6\u00ba.","7":"La temperatura perfecta para ignorar lo importante es 7\u00ba.","8":"Demasiado fr\u00edo para crecer y demasiado c\u00e1lido para reaccionar a 8\u00ba.","9":"La inercia parece eficiencia a 9\u00ba, pero no lo es.","10":"Ni fr\u00edo ni calor, ni control ni caos, es peligroso a 10\u00ba.","11":"El punto exacto donde todo parece bajo control es a 11\u00ba.","12":"Tienes 12 sistemas distintos, y ninguno se habla a 12\u00ba.","13":"El mismo error se repite 13 veces en silencio a 13\u00ba.","14":"Hace 14 d\u00edas que no ves tu flujo real a 14\u00ba.","15":"Tu ERP tiene 15 reportes, pero solo usas 2 a 15\u00ba.","16":"Parece eficiencia, pero es falta de informaci\u00f3n a 16\u00ba.","17":"\u00bfEn serio tienes 17 procesos para facturar a 17\u00ba?","18":"El Excel 18 es el que todos editan, pero nadie lo sabe a 18\u00ba.","19":"Clientes felices, pero rentabilidad cero a 19\u00ba.","20":"Las decisiones se sienten tibias y eso cuesta caro a 20\u00ba.","21":"Suben las ventas, pero bajan los m\u00e1rgenes a 21\u00ba.","22":"Tus datos est\u00e1n en 22 lugares distintos a 22\u00ba.","23":"Procesos al rojo y equipos al borde a 23\u00ba.","24":"Tienes 24 pendientes y cero prioridades a 24\u00ba.","25":"Cuentas por pagar en 25 d\u00edas, y t\u00fa ni sabes a 25\u00ba.","26":"Tu equipo arde, pero t\u00fa no lo ves a 26\u00ba.","27":"El sistema se cae otra vez a 27\u00ba.","28":"As\u00ed se siente crecer sin control a 28\u00ba.","29":"Y ni una alerta a tiempo a 29\u00ba.","30":"No est\u00e1s quemando etapas, est\u00e1s quemando todo a 30\u00ba.","31":"\u00bfA este calor, a\u00fan no tienes un ERP a 31\u00ba?","32":"Costos desbordados y clientes impacientes a 32\u00ba.","33":"Una empresa a 33\u00ba, m\u00e1s calor solo en la quiebra."};
+        const weatherDescriptions = {0:"Despejado",1:"Mayormente despejado",2:"Parcialmente nublado",3:"Nublado",45:"Niebla",48:"Niebla con escarcha",51:"Llovizna ligera",53:"Llovizna moderada",55:"Llovizna densa",61:"Lluvia ligera",63:"Lluvia moderada",65:"Lluvia fuerte",80:"Chubascos ligeros",81:"Chubascos moderados",82:"Chubascos violentos",95:"Tormenta",96:"Tormenta con granizo ligero",99:"Tormenta con granizo pesado"};
+        
+        const weatherIcons = {
+            "sun": "https://www.amcharts.com/wp-content/themes/amcharts4/css/img/icons/weather/animated/day.svg",
+            "cloud-sun": "https://www.amcharts.com/wp-content/themes/amcharts4/css/img/icons/weather/animated/cloudy-day-1.svg",
+            "cloud": "https://www.amcharts.com/wp-content/themes/amcharts4/css/img/icons/weather/animated/cloudy.svg",
+            "cloud-rain": "https://www.amcharts.com/wp-content/themes/amcharts4/css/img/icons/weather/animated/rainy-6.svg",
+            "cloud-storm": "https://www.amcharts.com/wp-content/themes/amcharts4/css/img/icons/weather/animated/thunder.svg",
+            "fog": "https://www.amcharts.com/wp-content/themes/amcharts4/css/img/icons/weather/animated/cloudy.svg"
         };
+        
+        const videoSources = {
+            "sun": "https://videos.pexels.com/video-files/853874/853874-hd_1920_1080_25fps.mp4",
+            "cloud-sun": "https://videos.pexels.com/video-files/4792686/4792686-hd_1920_1080_24fps.mp4",
+            "cloud": "https://videos.pexels.com/video-files/2750349/2750349-hd_1920_1080_25fps.mp4",
+            "cloud-rain": "https://videos.pexels.com/video-files/1534493/1534493-hd_1920_1080_30fps.mp4",
+            "cloud-storm": "https://videos.pexels.com/video-files/5009113/5009113-hd_1920_1080_25fps.mp4",
+            "fog": "https://videos.pexels.com/video-files/2864831/2864831-hd_1920_1080_25fps.mp4"
+        };
+        
+        function getWeatherKey(code) {
+            if (code === 0) return "sun";
+            if (code >= 1 && code <= 3) return "cloud-sun";
+            if (code >= 45 && code <= 48) return "fog";
+            if (code >= 51 && code <= 82) return "cloud-rain";
+            if (code >= 95 && code <= 99) return "cloud-storm";
+            return "cloud";
+        }
 
-        document.getElementById("temp").textContent = `${temperature}°`;
+        // --- LÓGICA DEL CLIMA ---
+        async function getWeather() {
+            const lat = -33.45;
+            const lon = -70.66;
+            const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`;
 
-        const frase = frases[temperature] || `${temperature}°: Cada grado cuenta. Y cada clic también.`;
-        document.getElementById("phrase").textContent = frase;
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error(`Error de red: ${response.statusText}`);
+                const data = await response.json();
 
-      } catch (error) {
-        document.getElementById("phrase").textContent = "Error al obtener el clima.";
-      }
-    }
+                const temperature = Math.round(data.current_weather.temperature);
+                const weatherCode = data.current_weather.weathercode;
+                const tempMax = Math.round(data.daily.temperature_2m_max[0]);
+                const tempMin = Math.round(data.daily.temperature_2m_min[0]);
+                
+                const weatherKey = getWeatherKey(weatherCode);
 
-    getWeather();
-  </script>
+                // Actualizar UI
+                tempElement.textContent = `${temperature}°`;
+                phraseElement.textContent = frases[temperature] || `Cada grado cuenta. Y cada clic también.`;
+                conditionElement.textContent = weatherDescriptions[weatherCode] || "Condición no disponible";
+                highLowElement.textContent = `Max: ${tempMax}° / Min: ${tempMin}°`;
+                weatherIconElement.src = weatherIcons[weatherKey];
+                
+                // Actualizar fondo de video
+                videoBgElement.src = videoSources[weatherKey];
+                
+                // Mostrar contenido con animación
+                weatherContainer.classList.add('visible');
+
+            } catch (error) {
+                console.error("Error al obtener el clima:", error);
+                phraseElement.textContent = "No se pudo cargar el clima. Intenta de nuevo más tarde.";
+                weatherContainer.classList.add('visible');
+            }
+        }
+        
+        // --- INICIO ---
+        getWeather();
+
+    </script>
 </body>
 </html>
