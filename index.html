@@ -12,29 +12,42 @@
 
     <style>
         :root {
-            --text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+            --text-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
         }
 
         body {
             font-family: 'Montserrat', sans-serif;
             margin: 0;
             overflow: hidden;
-            background-color: #1a202c;
             color: white;
+            background-color: #1a202c; /* Fallback si la imagen no carga */
         }
 
-        #video-bg {
+        #image-bg {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: -1;
-            transform: translateX(-50%) translateY(-50%);
             background-size: cover;
-            transition: opacity 1s ease-in-out;
+            background-position: center;
+            transition: opacity 1.5s ease-in-out;
+            opacity: 0;
+            /* Añadimos un velo oscuro para mejorar la legibilidad del texto */
+            filter: brightness(0.7);
+        }
+
+        header {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            z-index: 10;
+        }
+
+        #logo {
+            width: 120px; /* Tamaño fijo para evitar pixelación */
+            height: auto;
         }
 
         main {
@@ -42,175 +55,154 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            padding: 1rem;
-        }
-
-        #weather-container {
-            background: rgba(20, 20, 20, 0.25);
-            backdrop-filter: blur(15px) saturate(150%);
-            -webkit-backdrop-filter: blur(15px) saturate(150%);
-            border-radius: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 2rem clamp(1.5rem, 5vw, 3rem);
             text-align: center;
+            height: 100vh;
+            padding: 2rem;
+            box-sizing: border-box;
             opacity: 0;
             transform: translateY(20px);
-            transition: opacity 1.5s ease-out, transform 1.5s ease-out;
-            max-width: 90vw;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: opacity 1.5s ease-out 0.5s, transform 1.5s ease-out 0.5s;
         }
-        
-        #weather-container.visible {
+
+        main.visible {
             opacity: 1;
             transform: translateY(0);
         }
 
-        #city {
-            font-size: clamp(1.5rem, 4vw, 2rem);
-            font-weight: 700;
-            text-shadow: var(--text-shadow);
-        }
-
-        .temp-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
-            margin: 0.5rem 0;
-        }
-
-        #weather-icon {
-            width: clamp(60px, 15vw, 100px);
-            height: clamp(60px, 15vw, 100px);
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
-        }
-
         #temp {
-            font-size: clamp(4.5rem, 18vw, 9rem);
+            font-size: clamp(8rem, 25vw, 15rem);
             font-weight: 900;
             text-shadow: var(--text-shadow);
             line-height: 1;
         }
 
-        #condition {
-            font-size: clamp(1.2rem, 3vw, 1.5rem);
+        #phrase {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
             font-weight: 700;
-            text-transform: capitalize;
             text-shadow: var(--text-shadow);
+            max-width: 900px;
+            margin-top: 1rem;
+            text-transform: uppercase;
         }
         
-        #high-low {
-            font-size: clamp(1rem, 2.5vw, 1.25rem);
+        #tagline {
+            font-size: clamp(1.1rem, 2.2vw, 1.4rem); /* Texto de 10 años más grande */
             font-weight: 300;
             text-shadow: var(--text-shadow);
+            max-width: 600px;
+            margin-top: 2.5rem;
+            font-style: italic;
             opacity: 0.9;
         }
 
-        #phrase {
-            font-size: clamp(1rem, 2.5vw, 1.5rem);
-            font-weight: 400;
-            text-shadow: var(--text-shadow);
-            margin-top: 1.5rem;
-            max-width: 600px;
-            font-style: italic;
-            opacity: 0.95;
-        }
-        
         footer {
             position: absolute;
-            bottom: 1.5rem;
-            left: 1.5rem;
-            right: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            bottom: 2rem;
+            width: 100%;
+            padding: 0 2rem;
+            box-sizing: border-box;
         }
 
-        .footer-text {
-            font-size: clamp(0.75rem, 2vw, 1rem);
+        #cta-container {
+            display: flex;
+            justify-content: flex-end; /* Alinea los items a la derecha */
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        #cta-text {
+            font-size: clamp(0.8rem, 1.8vw, 1rem); /* Texto CTA más chico */
             font-weight: 700;
             text-shadow: var(--text-shadow);
+            text-align: right;
+            line-height: 1.4;
         }
         
         .qr-img {
-            width: clamp(60px, 10vw, 80px);
-            height: clamp(60px, 10vw, 80px);
-            border-radius: 0.5rem;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            width: clamp(90px, 15vw, 110px);
+            height: clamp(90px, 15vw, 110px);
+            border-radius: 0.75rem;
+            background: white;
+            padding: 0.5rem;
+            flex-shrink: 0; /* Evita que el QR se encoja */
         }
     </style>
 </head>
 <body>
-    <video autoplay muted loop id="video-bg">
-        <!-- El video se cargará aquí con JavaScript -->
-    </video>
+    <div id="image-bg"></div>
 
-    <main>
-        <div id="weather-container">
-            <div id="city">Santiago</div>
-            <div class="temp-container">
-                <img id="weather-icon" src="" alt="Icono del Clima">
-                <div id="temp">--°</div>
-            </div>
-            <div id="condition">--</div>
-            <div id="high-low">Max: --° / Min: --°</div>
-            <div id="phrase">Cargando...</div>
-        </div>
+    <header>
+        <img id="logo" src="https://sp-ao.shortpixel.ai/client/to_webp,q_lossy,ret_img,w_100,h_36/https://2win.cl/wp-content/uploads/2025/07/logo-2win.png" alt="Logo 2Win">
+    </header>
+
+    <main id="main-content">
+        <div id="temp">--°</div>
+        <p id="phrase">Cargando...</p>
+        <p id="tagline">En 10 años aprendimos que las empresas cambian grado a grado. Si no lo ves a tiempo, te congelas… o te quemas.</p>
     </main>
 
     <footer>
-        <div class="footer-text">2Win Solution - 10 años ayudando a empresas a ver lo que otros no.</div>
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://www.2win.cl&bgcolor=ffffff&color=000000&qzone=1" alt="QR 2win.cl" class="qr-img">
+        <div id="cta-container">
+            <div id="cta-text">DESCUBRE A QUÉ<br>TEMPERATURA<br>ESTÁ TU EMPRESA &gt;</div>
+            <img class="qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=https://www.2win.cl&qzone=1" alt="Código QR para 2win.cl">
+        </div>
     </footer>
     
     <script>
         // --- ELEMENTOS DEL DOM ---
         const tempElement = document.getElementById("temp");
         const phraseElement = document.getElementById("phrase");
-        const weatherContainer = document.getElementById("weather-container");
-        const conditionElement = document.getElementById("condition");
-        const highLowElement = document.getElementById("high-low");
-        const weatherIconElement = document.getElementById("weather-icon");
-        const videoBgElement = document.getElementById("video-bg");
+        const imageBgElement = document.getElementById("image-bg");
+        const mainContent = document.getElementById("main-content");
 
-        // --- DICCIONARIOS Y FRASES ---
-        const frases = { "-5":"Tu empresa est\u00e1 congelada a -5\u00ba, ni siquiera el Excel responde.","-4":"A -4\u00ba, ya nadie toma decisiones; solo sobreviven.","-3":"Cuando el flujo de caja ya no fluye, se siente a -3\u00ba.","-2":"Todo est\u00e1 quieto, lento y mal, como a -2\u00ba.","-1":"El problema ya empez\u00f3, aunque casi invisible a -1\u00ba.","0":"La situaci\u00f3n es neutral a 0\u00ba, y ese es el problema.","1":"Solo un grado, 1\u00ba, separa la estabilidad del colapso.","2":"El margen se enfr\u00eda a 2\u00ba, \u00bfy t\u00fa sigues vendiendo?","3":"La operaci\u00f3n sigue, pero sin rumbo, a 3\u00ba.","4":"No est\u00e1s quebrado, solo dormido a 4\u00ba.","5":"Todo parece bien a 5\u00ba, hasta que revisas el inventario.","6":"Los errores no duelen todav\u00eda a 6\u00ba.","7":"La temperatura perfecta para ignorar lo importante es 7\u00ba.","8":"Demasiado fr\u00edo para crecer y demasiado c\u00e1lido para reaccionar a 8\u00ba.","9":"La inercia parece eficiencia a 9\u00ba, pero no lo es.","10":"Ni fr\u00edo ni calor, ni control ni caos, es peligroso a 10\u00ba.","11":"El punto exacto donde todo parece bajo control es a 11\u00ba.","12":"Tienes 12 sistemas distintos, y ninguno se habla a 12\u00ba.","13":"El mismo error se repite 13 veces en silencio a 13\u00ba.","14":"Hace 14 d\u00edas que no ves tu flujo real a 14\u00ba.","15":"Tu ERP tiene 15 reportes, pero solo usas 2 a 15\u00ba.","16":"Parece eficiencia, pero es falta de informaci\u00f3n a 16\u00ba.","17":"\u00bfEn serio tienes 17 procesos para facturar a 17\u00ba?","18":"El Excel 18 es el que todos editan, pero nadie lo sabe a 18\u00ba.","19":"Clientes felices, pero rentabilidad cero a 19\u00ba.","20":"Las decisiones se sienten tibias y eso cuesta caro a 20\u00ba.","21":"Suben las ventas, pero bajan los m\u00e1rgenes a 21\u00ba.","22":"Tus datos est\u00e1n en 22 lugares distintos a 22\u00ba.","23":"Procesos al rojo y equipos al borde a 23\u00ba.","24":"Tienes 24 pendientes y cero prioridades a 24\u00ba.","25":"Cuentas por pagar en 25 d\u00edas, y t\u00fa ni sabes a 25\u00ba.","26":"Tu equipo arde, pero t\u00fa no lo ves a 26\u00ba.","27":"El sistema se cae otra vez a 27\u00ba.","28":"As\u00ed se siente crecer sin control a 28\u00ba.","29":"Y ni una alerta a tiempo a 29\u00ba.","30":"No est\u00e1s quemando etapas, est\u00e1s quemando todo a 30\u00ba.","31":"\u00bfA este calor, a\u00fan no tienes un ERP a 31\u00ba?","32":"Costos desbordados y clientes impacientes a 32\u00ba.","33":"Una empresa a 33\u00ba, m\u00e1s calor solo en la quiebra."};
-        const weatherDescriptions = {0:"Despejado",1:"Mayormente despejado",2:"Parcialmente nublado",3:"Nublado",45:"Niebla",48:"Niebla con escarcha",51:"Llovizna ligera",53:"Llovizna moderada",55:"Llovizna densa",61:"Lluvia ligera",63:"Lluvia moderada",65:"Lluvia fuerte",80:"Chubascos ligeros",81:"Chubascos moderados",82:"Chubascos violentos",95:"Tormenta",96:"Tormenta con granizo ligero",99:"Tormenta con granizo pesado"};
-        
-        const weatherIcons = {
-            "sun": "https://www.amcharts.com/wp-content/themes/amcharts4/css/img/icons/weather/animated/day.svg",
-            "cloud-sun": "https://www.amcharts.com/wp-content/themes/amcharts4/css/img/icons/weather/animated/cloudy-day-1.svg",
-            "cloud": "https://www.amcharts.com/wp-content/themes/amcharts4/css/img/icons/weather/animated/cloudy.svg",
-            "cloud-rain": "https://www.amcharts.com/wp-content/themes/amcharts4/css/img/icons/weather/animated/rainy-6.svg",
-            "cloud-storm": "https://www.amcharts.com/wp-content/themes/amcharts4/css/img/icons/weather/animated/thunder.svg",
-            "fog": "https://www.amcharts.com/wp-content/themes/amcharts4/css/img/icons/weather/animated/cloudy.svg"
+        // --- FRASES DE NEGOCIO MEJORADAS ---
+        const frases = {
+            "-5": "A -5°, tus datos están congelados en hojas de cálculo inconexas.",
+            "-4": "Con -4° de visibilidad, tomar decisiones es como caminar a ciegas.",
+            "-3": "El flujo de caja se congela. Un ERP te daría el control.",
+            "-2": "A -2°, la operación es tan lenta que parece que va en reversa.",
+            "-1": "El problema ya empezó, aunque es casi invisible sin data centralizada.",
+            "0": "Estás en 0. Ni avanzas ni retrocedes. La complacencia es el mayor riesgo.",
+            "1": "Solo 1 sistema integrado te separa del caos total.",
+            "2": "Con 2 planillas de Excel compitiendo, la verdad siempre se pierde.",
+            "3": "Tu equipo tiene 3 reuniones para validar un dato que debería ser automático.",
+            "4": "4 horas hombre perdidas al día en tareas manuales. ¿Ya hiciste el cálculo?",
+            "5": "Con 5 sistemas que no se hablan, la ineficiencia se siente.",
+            "6": "6 clics para una tarea simple. Tu sistema actual no está funcionando.",
+            "7": "La suerte no es una estrategia. Necesitas datos, no opiniones.",
+            "8": "8 de cada 10 errores son por data incorrecta. Es hora de un ERP.",
+            "9": "La inercia parece eficiencia, pero solo es falta de información.",
+            "10": "10 reportes manuales al día. ¿Cuánto tiempo estás perdiendo?",
+            "11": "Todo parece bajo control, hasta que un cliente se queja por un error evitable.",
+            "12": "Tienes 12 procesos distintos para facturar, y ninguno es automático.",
+            "13": "Sin un ERP, el mismo error se repite 13 veces en silencio.",
+            "14": "Hace 14 días que no ves tu flujo real. Estás operando con data vieja.",
+            "15": "A 15°, la intuición es tu único KPI. Es una apuesta arriesgada.",
+            "16": "Parece eficiencia, pero es falta de un sistema que te alerte a tiempo.",
+            "17": "17 procesos manuales para una venta. ¿En serio crees que eres competitivo?",
+            "18": "Tus ventas crecen a 18%, pero tu rentabilidad es un misterio.",
+            "19": "Clientes felices, pero rentabilidad cero. Necesitas visibilidad de costos.",
+            "20": "20% de tu inventario está obsoleto. Tu ERP debería haberte avisado.",
+            "21": "Suben las ventas, pero bajan los márgenes. El calor te impide ver la fuga.",
+            "22": "Tus datos están en 22 lugares distintos. La torre de Babel de la información.",
+            "23": "Procesos al rojo vivo y equipos al borde del colapso.",
+            "24": "Tienes 24 pendientes urgentes y cero prioridades claras. Falta un sistema.",
+            "25": "A 25°, el calor de la operación te impide ver los problemas de fondo.",
+            "26": "Tu equipo arde por la sobrecarga manual, pero tú no lo ves.",
+            "27": "El sistema se cae otra vez. El costo de no invertir es cada vez más alto.",
+            "28": "Así se siente crecer sin control. Más ventas, más problemas.",
+            "29": "Y ni una alerta a tiempo. Estás reaccionando, no gestionando.",
+            "30": "30 días para cerrar el mes. Con un sistema integrado, serían horas.",
+            "31": "A este calor, ¿aún no tienes un ERP que te dé un respiro?",
+            "32": "Costos desbordados y clientes impacientes. La fórmula del desastre.",
+            "33": "A 33°, tu empresa está quemando recursos, no etapas. Necesitas control."
         };
-        
-        // --- CORRECCIÓN: Videos de una fuente más fiable (Coverr) ---
-        const videoSources = {
-            "sun": "https://cdn.coverr.co/videos/coverr-clear-sky-628/1080p.mp4",
-            "cloud-sun": "https://cdn.coverr.co/videos/coverr-dramatic-clouds-5423/1080p.mp4",
-            "cloud": "https://cdn.coverr.co/videos/coverr-flying-through-the-clouds-992/1080p.mp4",
-            "cloud-rain": "https://cdn.coverr.co/videos/coverr-rain-on-a-window-3576/1080p.mp4",
-            "cloud-storm": "https://cdn.coverr.co/videos/coverr-a-flash-of-lightning-in-the-sky-417/1080p.mp4",
-            "fog": "https://cdn.coverr.co/videos/coverr-fog-over-a-forest-5825/1080p.mp4"
-        };
-        
-        function getWeatherKey(code) {
-            if (code === 0) return "sun";
-            if (code >= 1 && code <= 3) return "cloud-sun";
-            if (code >= 45 && code <= 48) return "fog";
-            if (code >= 51 && code <= 82) return "cloud-rain";
-            if (code >= 95 && code <= 99) return "cloud-storm";
-            return "cloud";
-        }
 
         // --- LÓGICA DEL CLIMA ---
         async function getWeather() {
             const lat = -33.45;
             const lon = -70.66;
-            const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`;
+            const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
 
             try {
                 const response = await fetch(apiUrl);
@@ -218,29 +210,23 @@
                 const data = await response.json();
 
                 const temperature = Math.round(data.current_weather.temperature);
-                const weatherCode = data.current_weather.weathercode;
-                const tempMax = Math.round(data.daily.temperature_2m_max[0]);
-                const tempMin = Math.round(data.daily.temperature_2m_min[0]);
-                
-                const weatherKey = getWeatherKey(weatherCode);
 
                 // Actualizar UI
                 tempElement.textContent = `${temperature}°`;
                 phraseElement.textContent = frases[temperature] || `Cada grado cuenta. Y cada clic también.`;
-                conditionElement.textContent = weatherDescriptions[weatherCode] || "Condición no disponible";
-                highLowElement.textContent = `Max: ${tempMax}° / Min: ${tempMin}°`;
-                weatherIconElement.src = weatherIcons[weatherKey];
                 
-                // Actualizar fondo de video
-                videoBgElement.src = videoSources[weatherKey];
+                // CORRECCIÓN: Volvemos a usar picsum.photos que es más estable para este caso de uso.
+                const imageUrl = `https://picsum.photos/seed/${temperature}/1920/1080`;
+                imageBgElement.style.backgroundImage = `url(${imageUrl})`;
+                imageBgElement.style.opacity = 1;
                 
                 // Mostrar contenido con animación
-                weatherContainer.classList.add('visible');
+                mainContent.classList.add('visible');
 
             } catch (error) {
                 console.error("Error al obtener el clima:", error);
                 phraseElement.textContent = "No se pudo cargar el clima. Intenta de nuevo más tarde.";
-                weatherContainer.classList.add('visible');
+                mainContent.classList.add('visible');
             }
         }
         
